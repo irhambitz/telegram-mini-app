@@ -2,114 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Clicker Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            user-select: none;
+        }
         body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f9f9f9;
-            user-select: none;
+            justify-content: space-between;
+            overflow: hidden;
         }
         #balance {
             font-size: 48px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        #bitcoin {
+            font-style: italic;
+            font-size: 24px;
+            color: gray;
         }
         #coin {
             width: 150px;
             height: 150px;
-            background-color: gold;
+            background-color: orange;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 50px;
             cursor: pointer;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite;
         }
-        #clicks-left {
-            font-size: 24px;
-            margin-top: 20px;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .floating-text {
+            position: absolute;
+            font-size: 20px;
+            font-weight: bold;
+            color: orange;
+            opacity: 1;
+            transform: translateY(0);
+            transition: transform 1s ease-out, opacity 1s ease-out;
+        }
+        .fade-out {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        .menu-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 15px 0;
+            background-color: black;
+            position: absolute;
+            bottom: 0;
+        }
+        .menu-item {
+            font-size: 18px;
+            color: #858585;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .menu-item.active {
+            color: #FFFFFF;
+        }
+        .coming-soon {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 40vh;
         }
     </style>
 </head>
 <body>
-    <div id="balance">0</div>
-    <div id="coin">💰</div>
-    <div id="clicks-left">2000/3</div>
-
+    <div id="balance">1,234</div>
+    <div id="bitcoin">bitcoin</div>
+    <div id="coin">&#8383;</div>
+    <div id="clicks-left">2,000/3</div>
+    
+    <div class="menu-bar">
+        <div id="home" class="menu-item active">Home</div>
+        <div id="friends" class="menu-item">Friends</div>
+    </div>
+    
     <script>
-        // Ambil data dari Telegram Web Apps API
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // Dapatkan ID pengguna Telegram
-        let userId = tg.initDataUnsafe?.user?.id || "guest";
-
-        // Gunakan localStorage tetapi dengan ID pengguna sebagai kunci unik
-        let balanceKey = `balance_${userId}`;
-        let clicksKey = `clicks_${userId}`;
-        let periodKey = `period_${userId}`;
-        let lastResetKey = `lastReset_${userId}`;
-
-        let balance = parseInt(localStorage.getItem(balanceKey)) || 0;
-        let totalClicks = 2000;
-        let remainingClicks = parseInt(localStorage.getItem(clicksKey)) || 2000;
-        let period = parseInt(localStorage.getItem(periodKey)) || 3;
-        let lastReset = localStorage.getItem(lastResetKey) || new Date().toDateString();
-
-        function checkReset() {
-            let today = new Date().toDateString();
-            if (lastReset !== today) {
-                totalClicks = 2000;
-                remainingClicks = totalClicks;
-                period = 3;
-                lastReset = today;
-
-                // Simpan berdasarkan ID pengguna
-                localStorage.setItem(clicksKey, remainingClicks);
-                localStorage.setItem(periodKey, period);
-                localStorage.setItem(lastResetKey, today);
-            }
-        }
+        let balance = 1234;
+        let remainingClicks = 2000;
+        let period = 3;
 
         function updateUI() {
-            document.getElementById("balance").innerText = balance;
+            document.getElementById("balance").innerText = balance.toLocaleString();
             document.getElementById("clicks-left").innerText = `${remainingClicks}/${period}`;
         }
 
-        document.body.addEventListener("pointerdown", function () {
-            if (remainingClicks > 0) {
+        document.body.addEventListener("pointerdown", function (event) {
+            if (!event.target.classList.contains("menu-item")) {
                 balance++;
                 remainingClicks--;
                 if (remainingClicks === 0 && period > 1) {
                     period--;
-                    remainingClicks = totalClicks;
-                } else if (remainingClicks === 0 && period === 1) {
-                    remainingClicks = 0;
-                    period = 0;
+                    remainingClicks = 2000;
+                }
+                updateUI();
+
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
                 }
 
-                // Simpan berdasarkan ID pengguna
-                localStorage.setItem(balanceKey, balance);
-                localStorage.setItem(clicksKey, remainingClicks);
-                localStorage.setItem(periodKey, period);
-
-                updateUI();
+                let floatingText = document.createElement("div");
+                floatingText.innerText = "+1";
+                floatingText.classList.add("floating-text");
+                floatingText.style.left = `${event.clientX}px`;
+                floatingText.style.top = `${event.clientY}px`;
+                document.body.appendChild(floatingText);
+                setTimeout(() => floatingText.classList.add("fade-out"), 50);
+                setTimeout(() => floatingText.remove(), 1000);
             }
         });
 
-        window.onload = function () {
-            checkReset();
-            updateUI();
-        };
+        document.getElementById("home").addEventListener("click", function () {
+            document.getElementById("home").classList.add("active");
+            document.getElementById("friends").classList.remove("active");
+            document.getElementById("balance").style.display = "block";
+            document.getElementById("bitcoin").style.display = "block";
+            document.getElementById("coin").style.display = "block";
+            document.getElementById("clicks-left").style.display = "block";
+            document.querySelector(".coming-soon")?.remove();
+        });
+
+        document.getElementById("friends").addEventListener("click", function () {
+            document.getElementById("home").classList.remove("active");
+            document.getElementById("friends").classList.add("active");
+            document.getElementById("balance").style.display = "none";
+            document.getElementById("bitcoin").style.display = "none";
+            document.getElementById("coin").style.display = "none";
+            document.getElementById("clicks-left").style.display = "none";
+            let comingSoon = document.createElement("div");
+            comingSoon.innerText = "COMING SOON !!!";
+            comingSoon.classList.add("coming-soon");
+            document.body.appendChild(comingSoon);
+        });
     </script>
 </body>
 </html>

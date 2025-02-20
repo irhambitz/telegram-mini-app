@@ -24,7 +24,7 @@
         #coin {
             width: 150px;
             height: 150px;
-            background-color: blue;
+            background-color: gold;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -44,13 +44,26 @@
     <div id="balance">0</div>
     <div id="coin">💰</div>
     <div id="clicks-left">2000/3</div>
-    
+
     <script>
-        let balance = 0;
+        // Ambil data dari Telegram Web Apps API
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Dapatkan ID pengguna Telegram
+        let userId = tg.initDataUnsafe?.user?.id || "guest";
+
+        // Gunakan localStorage tetapi dengan ID pengguna sebagai kunci unik
+        let balanceKey = `balance_${userId}`;
+        let clicksKey = `clicks_${userId}`;
+        let periodKey = `period_${userId}`;
+        let lastResetKey = `lastReset_${userId}`;
+
+        let balance = parseInt(localStorage.getItem(balanceKey)) || 0;
         let totalClicks = 2000;
-        let remainingClicks = 2000;
-        let period = 3;
-        let lastReset = localStorage.getItem("lastReset") || new Date().toDateString();
+        let remainingClicks = parseInt(localStorage.getItem(clicksKey)) || 2000;
+        let period = parseInt(localStorage.getItem(periodKey)) || 3;
+        let lastReset = localStorage.getItem(lastResetKey) || new Date().toDateString();
 
         function checkReset() {
             let today = new Date().toDateString();
@@ -59,9 +72,11 @@
                 remainingClicks = totalClicks;
                 period = 3;
                 lastReset = today;
-                localStorage.setItem("lastReset", today);
-                localStorage.setItem("remainingClicks", remainingClicks);
-                localStorage.setItem("period", period);
+
+                // Simpan berdasarkan ID pengguna
+                localStorage.setItem(clicksKey, remainingClicks);
+                localStorage.setItem(periodKey, period);
+                localStorage.setItem(lastResetKey, today);
             }
         }
 
@@ -81,18 +96,18 @@
                     remainingClicks = 0;
                     period = 0;
                 }
-                localStorage.setItem("balance", balance);
-                localStorage.setItem("remainingClicks", remainingClicks);
-                localStorage.setItem("period", period);
+
+                // Simpan berdasarkan ID pengguna
+                localStorage.setItem(balanceKey, balance);
+                localStorage.setItem(clicksKey, remainingClicks);
+                localStorage.setItem(periodKey, period);
+
                 updateUI();
             }
         });
 
         window.onload = function () {
             checkReset();
-            balance = parseInt(localStorage.getItem("balance")) || 0;
-            remainingClicks = parseInt(localStorage.getItem("remainingClicks")) || 2000;
-            period = parseInt(localStorage.getItem("period")) || 3;
             updateUI();
         };
     </script>

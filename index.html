@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+            user-select: none;
+        }
+        #balance {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        #coin {
+            width: 150px;
+            height: 150px;
+            background-color: gold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        #clicks-left {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="balance">0</div>
+    <div id="coin">💰</div>
+    <div id="clicks-left">2000/3</div>
+    
+    <script>
+        let balance = 0;
+        let totalClicks = 2000;
+        let remainingClicks = 2000;
+        let period = 3;
+        let lastReset = localStorage.getItem("lastReset") || new Date().toDateString();
+
+        function checkReset() {
+            let today = new Date().toDateString();
+            if (lastReset !== today) {
+                totalClicks = 2000;
+                remainingClicks = totalClicks;
+                period = 3;
+                lastReset = today;
+                localStorage.setItem("lastReset", today);
+                localStorage.setItem("remainingClicks", remainingClicks);
+                localStorage.setItem("period", period);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById("balance").innerText = balance;
+            document.getElementById("clicks-left").innerText = `${remainingClicks}/${period}`;
+        }
+
+        document.body.addEventListener("pointerdown", function () {
+            if (remainingClicks > 0) {
+                balance++;
+                remainingClicks--;
+                if (remainingClicks === 0 && period > 1) {
+                    period--;
+                    remainingClicks = totalClicks;
+                } else if (remainingClicks === 0 && period === 1) {
+                    remainingClicks = 0;
+                    period = 0;
+                }
+                localStorage.setItem("balance", balance);
+                localStorage.setItem("remainingClicks", remainingClicks);
+                localStorage.setItem("period", period);
+                updateUI();
+            }
+        });
+
+        window.onload = function () {
+            checkReset();
+            balance = parseInt(localStorage.getItem("balance")) || 0;
+            remainingClicks = parseInt(localStorage.getItem("remainingClicks")) || 2000;
+            period = parseInt(localStorage.getItem("period")) || 3;
+            updateUI();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+/* Reset default */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    user-select: none;
+}
+
+/* Style utama */
+body {
+    background-color: black;
+    color: white;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* Style Balance */
+#balance {
+    font-size: 64px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #ff9900;
+}
+
+/* Style Bitcoin */
+#bitcoin {
+    font-style: italic;
+    font-size: 30px;
+    color: gray;
+    font-weight: bold;
+}
+
+/* Style Coin */
+#coin {
+    width: 150px;
+    height: 150px;
+    background-image: url('../assets/bitcoin.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+}
+
+/* Animasi Pulse */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Style Floating Text */
+.floating-text {
+    position: absolute;
+    font-size: 30px;
+    font-weight: bold;
+    color: orange;
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 1s ease-out, opacity 1s ease-out;
+}
+
+.fade-out {
+    transform: translateY(-250px);
+    opacity: 1;
+}
+
+/* Style Menu Bar */
+.menu-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background-color: black;
+    padding: 10px 0;
+    z-index: 9999;
+}
+
+/* Style Menu Items */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    color: #858585;
+    cursor: pointer;
+    padding: 10px 15px;
+    position: relative;
+}
+
+/* Style Icon Menu */
+.menu-item img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 5px;
+}
+
+/* Style Icon Aktif/Nonaktif */
+.menu-item.active .active-icon { display: block; }
+.menu-item.active .inactive-icon { display: none; }
+.menu-item:not(.active) .active-icon { display: none; }
+.menu-item:not(.active) .inactive-icon { display: block; }
+
+/* Style Text Menu */
+.menu-item.active span { color: #FFFFFF; }
+.menu-item:not(.active) span { color: #858585; }
+
+/* Style Coming Soon */
+.coming-soon {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-top: 40vh;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}

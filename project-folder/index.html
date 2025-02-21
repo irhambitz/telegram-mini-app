@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Microtaps</title>
+
+    <!-- Link ke CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Library Telegram -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+    <!-- Bagian Balance -->
+    <div id="balance">0</div>
+    <div id="bitcoin">bitcoin</div>
+
+    <!-- Coin yang bisa diklik -->
+    <div id="coin"></div>
+
+    <!-- Menunjukkan sisa klik harian -->
+    <div id="clicks-left">2100/3</div>
+
+    <!-- Tombol Upgrade (jika nanti ada fitur upgrade) -->
+    <button id="upgrade">Upgrade</button>
+
+    <!-- Menu Navigasi -->
+    <div class="menu-bar">
+        <!-- Menu Home -->
+        <div id="home" class="menu-item active" onclick="switchMenu('home')">
+            <img src="assets/home.png" class="active-icon">
+            <img src="assets/home_gray.png" class="inactive-icon">
+            <span>Home</span>
+        </div>
+
+        <div id="leaderboard" class="menu-item" onclick="switchMenu('leaderboard')">
+            <img src="assets/leaderboard.png" class="active-icon">
+            <img src="assets/leaderboard_gray.png" class="inactive-icon">
+            <span>Leaderboard</span>
+        </div>
+
+        <!-- Menu Friends -->
+        <div id="friends" class="menu-item" onclick="switchMenu('friends')">
+            <img src="assets/friends.png" class="active-icon">
+            <img src="assets/friends_gray.png" class="inactive-icon">
+            <span>Friends</span>
+        </div>
+    </div>
+
+    <!-- Link ke JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
